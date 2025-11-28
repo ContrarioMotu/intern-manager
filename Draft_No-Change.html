@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Sistema de Gestión de Permisos y Aplicaciones</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon"></div>
+      <div>
+        <div class="logo-text-title">Sistema de Gestión<br>de Permisos</div>
+        <div class="logo-text-sub">Panel administrativo</div>
+      </div>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="nav-item active" data-view="dashboard">🏠 Dashboard</li>
+      <li class="nav-item" data-view="permisos">✅ Permisos</li>
+      <li class="nav-item" data-view="internos">👥 Internos</li>
+      <li class="nav-item" data-view="aplicaciones">🧩 Aplicaciones</li>
+      <li class="nav-item" data-view="areas">📍 Áreas</li>
+    </ul>
+
+    <div class="sidebar-footer">Versión 1.0 · Demo</div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- ========== VISTA DASHBOARD ========== -->
+    <section class="view active" data-view="dashboard">
+      <h1 class="main-header">Dashboard</h1>
+
+      <!-- FILTROS -->
+      <section class="filters-row">
+        <div class="filters-left">
+          <label class="filter" for="filter-area">
+            <span class="filter-label">Área</span>
+            <select id="filter-area" class="filter-select">
+              <option value="all">Todas las áreas</option>
+              <option value="ti">TI</option>
+              <option value="finanzas">Finanzas</option>
+              <option value="rh">Recursos Humanos</option>
+              <option value="operaciones">Operaciones</option>
+              <option value="otros">Otros</option>
+            </select>
+          </label>
+
+          <label class="filter" for="filter-app">
+            <span class="filter-label">Aplicación</span>
+            <select id="filter-app" class="filter-select">
+              <option value="all">Todas las aplicaciones</option>
+              <option value="sap-finanzas">SAP Finanzas</option>
+              <option value="jira">Jira</option>
+              <option value="vpn">VPN</option>
+              <option value="correo">Correo corporativo</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="filters-actions">
+          <button type="button" class="btn btn-primary" id="btn-nuevo-permiso">
+            + Nuevo permiso
+          </button>
+        </div>
+      </section>
+
+      <!-- MÉTRICAS -->
+      <section class="stats-row">
+        <div class="stat-card">
+          <div class="stat-icon green">✔</div>
+          <div>
+            <div class="stat-number" id="stat-total">0</div>
+            <div class="stat-label">Permisos totales</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon red">⏺</div>
+          <div>
+            <div class="stat-number" id="stat-pendientes">0</div>
+            <div class="stat-label">Pendientes</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon green">✔</div>
+          <div>
+            <div class="stat-number" id="stat-aprobados">0</div>
+            <div class="stat-label">Aprobados</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon amber">!</div>
+          <div>
+            <div class="stat-number" id="stat-rechazados">0</div>
+            <div class="stat-label">Rechazados</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- GRÁFICAS -->
+      <section class="row-2">
+
+        <!-- BARRAS + EJE -->
+        <div class="card">
+          <div class="card-title">Permisos por área</div>
+
+          <div class="chart-with-axis">
+            <!-- EJE Y -->
+            <div class="y-axis">
+              <span>80</span>
+              <span>60</span>
+              <span>40</span>
+              <span>20</span>
+              <span>0</span>
+            </div>
+
+            <!-- BARRAS -->
+            <div class="bar-chart">
+              <div class="bar" data-area="ti">
+                <div class="bar-fill" style="height: 0%;"></div>
+              </div>
+              <div class="bar" data-area="finanzas">
+                <div class="bar-fill" style="height: 0%;"></div>
+              </div>
+              <div class="bar" data-area="rh">
+                <div class="bar-fill" style="height: 0%;"></div>
+              </div>
+              <div class="bar" data-area="operaciones">
+                <div class="bar-fill" style="height: 0%;"></div>
+              </div>
+              <div class="bar" data-area="otros">
+                <div class="bar-fill" style="height: 0%;"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="chart-x-labels">
+            <span>TI</span>
+            <span>Finanzas</span>
+            <span>RH</span>
+            <span>Operaciones</span>
+            <span>Otros</span>
+          </div>
+        </div>
+
+        <!-- DONA -->
+        <div class="card">
+          <div class="card-title">Distribución por estatus</div>
+
+          <div class="donut-wrapper">
+            <div class="donut" id="donut-status"></div>
+
+            <div class="legend">
+              <div class="legend-item"><div class="legend-dot green"></div><span>Aprobado</span></div>
+              <div class="legend-item"><div class="legend-dot red"></div><span>Pendiente</span></div>
+              <div class="legend-item"><div class="legend-dot amber"></div><span>Rechazado</span></div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- TABLA PERMISOS (Dashboard) -->
+      <section class="row-3 card">
+        <div class="table-header">
+          <div class="table-title">Últimos permisos tramitados</div>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Interno</th>
+              <th>Área</th>
+              <th>Aplicación</th>
+              <th>Estado</th>
+              <th>Fecha Solicitud</th>
+              <th>Fecha de Resolución</th>
+              <th>Modificar</th>
+            </tr>
+          </thead>
+          <tbody id="dashboard-permisos-body">
+            <!-- Filas generadas dinámicamente -->
+          </tbody>
+        </table>
+      </section>
+    </section>
+
+    <!-- ========== VISTA PERMISOS ========== -->
+    <section class="view" data-view="permisos">
+      <h1 class="main-header">Permisos</h1>
+
+      <section class="card row-3">
+        <div class="table-header">
+          <div class="table-title">Listado de permisos</div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Interno</th>
+              <th>Área</th>
+              <th>Aplicación</th>
+              <th>Estado</th>
+              <th>Fecha Solicitud</th>
+              <th>Fecha Aprobación</th>
+            </tr>
+          </thead>
+          <tbody id="permisos-list-body">
+            <!-- Filas generadas dinámicamente -->
+          </tbody>
+        </table>
+      </section>
+    </section>
+
+    <!-- ========== VISTA INTERNOS ========== -->
+    <section class="view" data-view="internos">
+      <h1 class="main-header">Internos</h1>
+
+      <section class="card row-3">
+        <div class="table-header">
+          <div class="table-title">Listado de internos</div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Interno</th>
+              <th>Área</th>
+              <th>Correo</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody id="internos-list-body">
+            <!-- Filas generadas dinámicamente -->
+          </tbody>
+        </table>
+      </section>
+    </section>
+
+    <!-- ========== VISTA APLICACIONES ========== -->
+    <section class="view" data-view="aplicaciones">
+      <h1 class="main-header">Aplicaciones</h1>
+
+      <section class="card row-3">
+        <div class="table-header">
+          <div class="table-title">Listado de aplicaciones</div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Aplicación</th>
+              <th>Área principal</th>
+              <th>Tipo</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody id="aplicaciones-list-body">
+            <!-- Filas generadas dinámicamente -->
+          </tbody>
+        </table>
+      </section>
+    </section>
+
+    <!-- ========== VISTA ÁREAS ========== -->
+    <section class="view" data-view="areas">
+      <h1 class="main-header">Áreas</h1>
+
+      <section class="card row-3">
+        <div class="table-header">
+          <div class="table-title">Listado de áreas</div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Área</th>
+              <th>Responsable</th>
+              <th>Permisos totales</th>
+            </tr>
+          </thead>
+          <tbody id="areas-list-body">
+            <!-- Filas generadas dinámicamente -->
+          </tbody>
+        </table>
+      </section>
+    </section>
+
+  </main>
+
+</div>
+
+<!-- MODAL NUEVO PERMISO -->
+<div class="modal-backdrop" id="modal-nuevo-permiso">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title">Registrar nuevo permiso</h2>
+      <button type="button" class="modal-close" id="modal-nuevo-permiso-close-top" aria-label="Cerrar">
+        ×
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-field">
+          <label for="np-interno" class="form-label">Interno</label>
+          <input type="text" id="np-interno" class="form-input" placeholder="Nombre del interno" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-field">
+          <label for="np-area" class="form-label">Área</label>
+          <select id="np-area" class="form-input">
+            <option value="">Selecciona un área</option>
+            <option value="ti">TI</option>
+            <option value="finanzas">Finanzas</option>
+            <option value="rh">Recursos Humanos</option>
+            <option value="operaciones">Operaciones</option>
+            <option value="otros">Otros</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label for="np-app" class="form-label">Aplicación</label>
+          <select id="np-app" class="form-input">
+            <option value="">Selecciona una aplicación</option>
+            <option value="sap-finanzas">SAP Finanzas</option>
+            <option value="jira">Jira</option>
+            <option value="vpn">VPN</option>
+            <option value="correo">Correo corporativo</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-field">
+          <label for="np-estado" class="form-label">Estado inicial</label>
+          <select id="np-estado" class="form-input">
+            <option value="Pendiente">Pendiente</option>
+            <option value="Aprobado">Aprobado</option>
+            <option value="Rechazado">Rechazado</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline" id="modal-nuevo-permiso-cancelar">
+        Cancelar
+      </button>
+      <button type="button" class="btn btn-primary" id="modal-nuevo-permiso-registrar">
+        Registrar permiso
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL EDITAR PERMISO -->
+<div class="modal-backdrop" id="modal-editar-permiso">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title">Modificar permiso</h2>
+      <button type="button" class="modal-close" id="modal-editar-permiso-close-top" aria-label="Cerrar">
+        ×
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-field">
+          <span class="form-label">Interno</span>
+          <div id="ep-interno" class="form-readonly"></div>
+        </div>
+        <div class="form-field">
+          <span class="form-label">Área</span>
+          <div id="ep-area" class="form-readonly"></div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-field">
+          <span class="form-label">Aplicación</span>
+          <div id="ep-app" class="form-readonly"></div>
+        </div>
+        <div class="form-field">
+          <label for="ep-estado" class="form-label">Estado</label>
+          <select id="ep-estado" class="form-input">
+            <option value="Pendiente">Pendiente</option>
+            <option value="Aprobado">Aprobado</option>
+            <option value="Rechazado">Rechazado</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-field">
+          <span class="form-label">Fecha solicitud</span>
+          <div id="ep-fecha-solicitud" class="form-readonly"></div>
+        </div>
+        <div class="form-field">
+          <span class="form-label">Fecha aprobación</span>
+          <div id="ep-fecha-aprobacion" class="form-readonly"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline" id="modal-editar-permiso-cancelar">
+        Cancelar
+      </button>
+      <button type="button" class="btn btn-primary" id="modal-editar-permiso-guardar">
+        Guardar cambios
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const navItems = document.querySelectorAll('.nav-item[data-view]');
+    const views = document.querySelectorAll('.view');
+
+    navItems.forEach(item => {
+      item.addEventListener('click', () => {
+        const targetView = item.dataset.view;
+
+        navItems.forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+
+        views.forEach(view => {
+          view.classList.toggle('active', view.dataset.view === targetView);
+        });
+      });
+    });
+
+    // ---------- DATASETS ----------
+
+    // Dataset de permisos (tiene id para poder editarlos)
+    const permisosData = [
+      { id: 1,  areaKey: 'ti',         area: 'TI',               appKey: 'sap-finanzas', app: 'SAP Finanzas',      interno: 'Ana López',    estado: 'Pendiente', fechaSolicitud: '2025-11-23', fechaAprobacion: null },
+      { id: 2,  areaKey: 'finanzas',   area: 'Finanzas',         appKey: 'jira',         app: 'Jira',              interno: 'Juan Pérez',   estado: 'Aprobado',  fechaSolicitud: '2025-11-20', fechaAprobacion: '2025-11-22' },
+      { id: 3,  areaKey: 'rh',         area: 'Recursos Humanos', appKey: 'vpn',          app: 'VPN',               interno: 'Luis Díaz',    estado: 'Aprobado',  fechaSolicitud: '2025-11-19', fechaAprobacion: '2025-11-21' },
+      { id: 4,  areaKey: 'operaciones',area: 'Operaciones',      appKey: 'correo',       app: 'Correo corporativo',interno: 'María García', estado: 'Rechazado', fechaSolicitud: '2025-11-18', fechaAprobacion: '2025-11-18' },
+      { id: 5,  areaKey: 'ti',         area: 'TI',               appKey: 'jira',         app: 'Jira',              interno: 'Carlos Ruiz',  estado: 'Aprobado',  fechaSolicitud: '2025-11-21', fechaAprobacion: '2025-11-22' },
+      { id: 6,  areaKey: 'ti',         area: 'TI',               appKey: 'vpn',          app: 'VPN',               interno: 'Elena Torres', estado: 'Pendiente', fechaSolicitud: '2025-11-22', fechaAprobacion: null },
+      { id: 7,  areaKey: 'finanzas',   area: 'Finanzas',         appKey: 'sap-finanzas', app: 'SAP Finanzas',      interno: 'Pedro Gómez',  estado: 'Rechazado', fechaSolicitud: '2025-11-17', fechaAprobacion: '2025-11-18' },
+      { id: 8,  areaKey: 'rh',         area: 'Recursos Humanos', appKey: 'correo',       app: 'Correo corporativo',interno: 'Silvia Luna',  estado: 'Pendiente', fechaSolicitud: '2025-11-21', fechaAprobacion: null },
+      { id: 9,  areaKey: 'operaciones',area: 'Operaciones',      appKey: 'sap-finanzas', app: 'SAP Finanzas',      interno: 'Diego Vega',   estado: 'Aprobado',  fechaSolicitud: '2025-11-16', fechaAprobacion: '2025-11-17' },
+      { id:10,  areaKey: 'otros',      area: 'Otros',            appKey: 'correo',       app: 'Correo corporativo',interno: 'Lucía Rojas',  estado: 'Aprobado',  fechaSolicitud: '2025-11-15', fechaAprobacion: '2025-11-16' },
+      { id:11,  areaKey: 'otros',      area: 'Otros',            appKey: 'vpn',          app: 'VPN',               interno: 'Raúl Soto',    estado: 'Pendiente', fechaSolicitud: '2025-11-23', fechaAprobacion: null }
+    ];
+
+    // Dataset de internos
+    const internosData = [
+      { nombre: 'Ana López',    area: 'TI',               correo: 'ana.lopez@empresa.com',    estado: 'Activa' },
+      { nombre: 'Juan Pérez',   area: 'Finanzas',         correo: 'juan.perez@empresa.com',   estado: 'Activa' },
+      { nombre: 'Luis Díaz',    area: 'Recursos Humanos', correo: 'luis.diaz@empresa.com',    estado: 'Activa' },
+      { nombre: 'María García', area: 'Operaciones',      correo: 'maria.garcia@empresa.com', estado: 'Activa' }
+    ];
+
+    // Dataset de aplicaciones
+    const aplicacionesData = [
+      { app: 'SAP Finanzas',      areaPrincipal: 'Finanzas', tipo: 'ERP',                  estado: 'Activa' },
+      { app: 'Jira',              areaPrincipal: 'TI',       tipo: 'Gestión de proyectos', estado: 'Activa' },
+      { app: 'VPN',               areaPrincipal: 'TI',       tipo: 'Acceso remoto',        estado: 'Activa' },
+      { app: 'Correo corporativo',areaPrincipal: 'Todas',    tipo: 'Comunicación',         estado: 'Activa' }
+    ];
+
+    // Dataset de áreas
+    const areasData = [
+      { area: 'TI',               responsable: 'Ana López',   permisosTotales: 15 },
+      { area: 'Finanzas',         responsable: 'Juan Pérez',  permisosTotales: 12 },
+      { area: 'Recursos Humanos', responsable: 'Luis Díaz',   permisosTotales: 10 },
+      { area: 'Operaciones',      responsable: 'María García',permisosTotales: 17 }
+    ];
+
+    // ---------- REFERENCIAS DOM ----------
+
+    const filterArea = document.getElementById('filter-area');
+    const filterApp = document.getElementById('filter-app');
+
+    const statTotal       = document.getElementById('stat-total');
+    const statPendientes  = document.getElementById('stat-pendientes');
+    const statAprobados   = document.getElementById('stat-aprobados');
+    const statRechazados  = document.getElementById('stat-rechazados');
+
+    const donutStatus = document.getElementById('donut-status');
+    const dashboardTableBody = document.getElementById('dashboard-permisos-body');
+
+    const permisosListBody      = document.getElementById('permisos-list-body');
+    const internosListBody      = document.getElementById('internos-list-body');
+    const aplicacionesListBody  = document.getElementById('aplicaciones-list-body');
+    const areasListBody         = document.getElementById('areas-list-body');
+
+    const barElems = {
+      ti: document.querySelector('.bar[data-area="ti"] .bar-fill'),
+      finanzas: document.querySelector('.bar[data-area="finanzas"] .bar-fill'),
+      rh: document.querySelector('.bar[data-area="rh"] .bar-fill'),
+      operaciones: document.querySelector('.bar[data-area="operaciones"] .bar-fill'),
+      otros: document.querySelector('.bar[data-area="otros"] .bar-fill'),
+    };
+
+    // ---------- FUNCIONES DASHBOARD ----------
+
+    function applyFilters() {
+      const areaVal = filterArea.value;
+      const appVal  = filterApp.value;
+
+      const filtered = permisosData.filter(p => {
+        const matchArea = areaVal === 'all' || p.areaKey === areaVal;
+        const matchApp  = appVal  === 'all' || p.appKey  === appVal;
+        return matchArea && matchApp;
+      });
+
+      updateStats(filtered);
+      updateBarChart(filtered);
+      updateDonut(filtered);
+      updateDashboardTable(filtered);
+    }
+
+    function updateStats(data) {
+      const total       = data.length;
+      const pendientes  = data.filter(p => p.estado === 'Pendiente').length;
+      const aprobados   = data.filter(p => p.estado === 'Aprobado').length;
+      const rechazados  = data.filter(p => p.estado === 'Rechazado').length;
+
+      statTotal.textContent      = total;
+      statPendientes.textContent = pendientes;
+      statAprobados.textContent  = aprobados;
+      statRechazados.textContent = rechazados;
+    }
+
+    function updateBarChart(data) {
+      const counts = { ti: 0, finanzas: 0, rh: 0, operaciones: 0, otros: 0 };
+
+      data.forEach(p => {
+        if (counts[p.areaKey] !== undefined) {
+          counts[p.areaKey]++;
+        }
+      });
+
+      const values = Object.values(counts);
+      const max = Math.max(1, ...values);
+
+      Object.keys(barElems).forEach(key => {
+        const barFill = barElems[key];
+        const value = counts[key];
+        const heightPercent = (value / max) * 100;
+        barFill.style.height = heightPercent + '%';
+      });
+    }
+
+    function updateDonut(data) {
+      const total = data.length;
+
+      if (total === 0) {
+        donutStatus.style.background = 'conic-gradient(#e5e7eb 0 100%)';
+        return;
+      }
+
+      const aprobados  = data.filter(p => p.estado === 'Aprobado').length;
+      const pendientes = data.filter(p => p.estado === 'Pendiente').length;
+      const rechazados = data.filter(p => p.estado === 'Rechazado').length;
+
+      const percAprob   = (aprobados  / total) * 100;
+      const percPend    = (pendientes / total) * 100;
+      const percRech    = (rechazados / total) * 100;
+
+      const endAprob = percAprob;
+      const endPend  = percAprob + percPend;
+      const endRech  = percAprob + percPend + percRech;
+
+      donutStatus.style.background = `
+        conic-gradient(
+          #16a34a 0 ${endAprob}%,
+          #ef4444 ${endAprob}% ${endPend}%,
+          #f59e0b ${endPend}% ${endRech}%
+        )
+      `;
+    }
+
+    function createEstadoBadge(estado) {
+      const spanEstado = document.createElement('span');
+      spanEstado.classList.add('badge');
+      if (estado === 'Pendiente') spanEstado.classList.add('pending');
+      if (estado === 'Aprobado')  spanEstado.classList.add('approved');
+      if (estado === 'Rechazado') spanEstado.classList.add('rejected');
+      spanEstado.textContent = estado;
+      return spanEstado;
+    }
+
+    function updateDashboardTable(data) {
+      const sorted = [...data].sort((a, b) => {
+        if (a.fechaSolicitud < b.fechaSolicitud) return 1;
+        if (a.fechaSolicitud > b.fechaSolicitud) return -1;
+        return 0;
+      });
+
+      dashboardTableBody.innerHTML = '';
+
+      sorted.forEach(p => {
+        const tr = document.createElement('tr');
+
+        const tdInterno = document.createElement('td');
+        tdInterno.textContent = p.interno;
+
+        const tdArea = document.createElement('td');
+        tdArea.textContent = p.area;
+
+        const tdApp = document.createElement('td');
+        tdApp.textContent = p.app;
+
+        const tdEstado = document.createElement('td');
+        tdEstado.appendChild(createEstadoBadge(p.estado));
+
+        const tdFechaSol = document.createElement('td');
+        tdFechaSol.textContent = p.fechaSolicitud;
+
+        const tdFechaApr = document.createElement('td');
+        tdFechaApr.textContent = p.fechaAprobacion || '—';
+
+        const tdAcciones = document.createElement('td');
+        const btnEdit = document.createElement('button');
+        btnEdit.type = 'button';
+        btnEdit.className = 'icon-button btn-edit-permiso';
+        btnEdit.setAttribute('aria-label', 'Modificar permiso');
+        btnEdit.dataset.permId = p.id;
+        btnEdit.textContent = '✏️';
+        tdAcciones.appendChild(btnEdit);
+
+        tr.appendChild(tdInterno);
+        tr.appendChild(tdArea);
+        tr.appendChild(tdApp);
+        tr.appendChild(tdEstado);
+        tr.appendChild(tdFechaSol);
+        tr.appendChild(tdFechaApr);
+        tr.appendChild(tdAcciones);
+
+        dashboardTableBody.appendChild(tr);
+      });
+
+      if (sorted.length === 0) {
+        const tr = document.createElement('tr');
+        const td = document.createElement('td');
+        td.colSpan = 7;
+        td.style.textAlign = 'center';
+        td.textContent = 'No hay permisos que coincidan con los filtros.';
+        tr.appendChild(td);
+        dashboardTableBody.appendChild(tr);
+      }
+    }
+
+    // ----- Listado completo de permisos (vista Permisos) -----
+    function renderPermisosList(data) {
+      permisosListBody.innerHTML = '';
+
+      const sorted = [...data].sort((a, b) => {
+        if (a.fechaSolicitud < b.fechaSolicitud) return 1;
+        if (a.fechaSolicitud > b.fechaSolicitud) return -1;
+        return 0;
+      });
+
+      sorted.forEach(p => {
+        const tr = document.createElement('tr');
+
+        const tdInterno = document.createElement('td');
+        tdInterno.textContent = p.interno;
+
+        const tdArea = document.createElement('td');
+        tdArea.textContent = p.area;
+
+        const tdApp = document.createElement('td');
+        tdApp.textContent = p.app;
+
+        const tdEstado = document.createElement('td');
+        tdEstado.appendChild(createEstadoBadge(p.estado));
+
+        const tdFechaSol = document.createElement('td');
+        tdFechaSol.textContent = p.fechaSolicitud;
+
+        const tdFechaApr = document.createElement('td');
+        tdFechaApr.textContent = p.fechaAprobacion || '—';
+
+        tr.appendChild(tdInterno);
+        tr.appendChild(tdArea);
+        tr.appendChild(tdApp);
+        tr.appendChild(tdEstado);
+        tr.appendChild(tdFechaSol);
+        tr.appendChild(tdFechaApr);
+
+        permisosListBody.appendChild(tr);
+      });
+
+      if (sorted.length === 0) {
+        const tr = document.createElement('tr');
+        const td = document.createElement('td');
+        td.colSpan = 6;
+        td.style.textAlign = 'center';
+        td.textContent = 'No hay permisos registrados.';
+        tr.appendChild(td);
+        permisosListBody.appendChild(tr);
+      }
+    }
+
+    // ----- Listado de internos -----
+    function renderInternosList(data) {
+      internosListBody.innerHTML = '';
+
+      data.forEach(int => {
+        const tr = document.createElement('tr');
+
+        const tdNombre = document.createElement('td');
+        tdNombre.textContent = int.nombre;
+
+        const tdArea = document.createElement('td');
+        tdArea.textContent = int.area;
+
+        const tdCorreo = document.createElement('td');
+        tdCorreo.textContent = int.correo;
+
+        const tdEstado = document.createElement('td');
+        const spanEstado = document.createElement('span');
+        spanEstado.classList.add('badge', 'approved');
+        spanEstado.textContent = int.estado;
+        tdEstado.appendChild(spanEstado);
+
+        tr.appendChild(tdNombre);
+        tr.appendChild(tdArea);
+        tr.appendChild(tdCorreo);
+        tr.appendChild(tdEstado);
+
+        internosListBody.appendChild(tr);
+      });
+
+      if (data.length === 0) {
+        const tr = document.createElement('tr');
+        const td = document.createElement('td');
+        td.colSpan = 4;
+        td.style.textAlign = 'center';
+        td.textContent = 'No hay internos registrados.';
+        tr.appendChild(td);
+        internosListBody.appendChild(tr);
+      }
+    }
+
+    // ----- Listado de aplicaciones -----
+    function renderAplicacionesList(data) {
+      aplicacionesListBody.innerHTML = '';
+
+      data.forEach(app => {
+        const tr = document.createElement('tr');
+
+        const tdApp = document.createElement('td');
+        tdApp.textContent = app.app;
+
+        const tdArea = document.createElement('td');
+        tdArea.textContent = app.areaPrincipal;
+
+        const tdTipo = document.createElement('td');
+        tdTipo.textContent = app.tipo;
+
+        const tdEstado = document.createElement('td');
+        const spanEstado = document.createElement('span');
+        spanEstado.classList.add('badge', 'approved');
+        spanEstado.textContent = app.estado;
+        tdEstado.appendChild(spanEstado);
+
+        tr.appendChild(tdApp);
+        tr.appendChild(tdArea);
+        tr.appendChild(tdTipo);
+        tr.appendChild(tdEstado);
+
+        aplicacionesListBody.appendChild(tr);
+      });
+
+      if (data.length === 0) {
+        const tr = document.createElement('tr');
+        const td = document.createElement('td');
+        td.colSpan = 4;
+        td.style.textAlign = 'center';
+        td.textContent = 'No hay aplicaciones registradas.';
+        tr.appendChild(td);
+        aplicacionesListBody.appendChild(tr);
+      }
+    }
+
+    // ----- Listado de áreas -----
+    function renderAreasList(data) {
+      areasListBody.innerHTML = '';
+
+      data.forEach(ar => {
+        const tr = document.createElement('tr');
+
+        const tdArea = document.createElement('td');
+        tdArea.textContent = ar.area;
+
+        const tdResp = document.createElement('td');
+        tdResp.textContent = ar.responsable;
+
+        const tdPermisos = document.createElement('td');
+        tdPermisos.textContent = ar.permisosTotales;
+
+        tr.appendChild(tdArea);
+        tr.appendChild(tdResp);
+        tr.appendChild(tdPermisos);
+
+        areasListBody.appendChild(tr);
+      });
+
+      if (data.length === 0) {
+        const tr = document.createElement('tr');
+        const td = document.createElement('td');
+        td.colSpan = 3;
+        td.style.textAlign = 'center';
+        td.textContent = 'No hay áreas registradas.';
+        tr.appendChild(td);
+        areasListBody.appendChild(tr);
+      }
+    }
+
+    // Eventos de cambio en los filtros del dashboard
+    filterArea.addEventListener('change', applyFilters);
+    filterApp.addEventListener('change', applyFilters);
+
+    // Render inicial (todas las áreas y aplicaciones)
+    applyFilters();
+
+    // Render inicial de las tablas de las otras vistas
+    renderPermisosList(permisosData);
+    renderInternosList(internosData);
+    renderAplicacionesList(aplicacionesData);
+    renderAreasList(areasData);
+
+    // ---------- LÓGICA MODAL NUEVO PERMISO ----------
+
+    const btnNuevoPermiso = document.getElementById('btn-nuevo-permiso');
+    const modalNuevoPermiso = document.getElementById('modal-nuevo-permiso');
+    const modalNuevoCloseTop = document.getElementById('modal-nuevo-permiso-close-top');
+    const modalNuevoCancelar = document.getElementById('modal-nuevo-permiso-cancelar');
+    const modalNuevoRegistrar = document.getElementById('modal-nuevo-permiso-registrar');
+
+    function abrirModalNuevoPermiso() {
+      modalNuevoPermiso.classList.add('active');
+    }
+
+    function cerrarModalNuevoPermiso() {
+      modalNuevoPermiso.classList.remove('active');
+    }
+
+    btnNuevoPermiso.addEventListener('click', abrirModalNuevoPermiso);
+    modalNuevoCloseTop.addEventListener('click', cerrarModalNuevoPermiso);
+    modalNuevoCancelar.addEventListener('click', cerrarModalNuevoPermiso);
+
+    modalNuevoPermiso.addEventListener('click', (e) => {
+      if (e.target === modalNuevoPermiso) {
+        cerrarModalNuevoPermiso();
+      }
+    });
+
+    modalNuevoRegistrar.addEventListener('click', () => {
+      const interno = document.getElementById('np-interno').value;
+      const areaKey = document.getElementById('np-area').value;
+      const appKey  = document.getElementById('np-app').value;
+      const estado  = document.getElementById('np-estado').value;
+
+      console.log('Nuevo permiso (demo, no se guarda aún):', {
+        interno,
+        areaKey,
+        appKey,
+        estado
+      });
+
+      cerrarModalNuevoPermiso();
+    });
+
+    // ---------- LÓGICA MODAL EDITAR PERMISO ----------
+
+    const modalEditarPermiso = document.getElementById('modal-editar-permiso');
+    const modalEditarCloseTop = document.getElementById('modal-editar-permiso-close-top');
+    const modalEditarCancelar = document.getElementById('modal-editar-permiso-cancelar');
+    const modalEditarGuardar = document.getElementById('modal-editar-permiso-guardar');
+
+    const epInterno = document.getElementById('ep-interno');
+    const epArea = document.getElementById('ep-area');
+    const epApp = document.getElementById('ep-app');
+    const epEstadoSelect = document.getElementById('ep-estado');
+    const epFechaSolicitud = document.getElementById('ep-fecha-solicitud');
+    const epFechaAprobacion = document.getElementById('ep-fecha-aprobacion');
+
+    let permisoEnEdicionId = null;
+
+    function abrirModalEditarPermiso(permiso) {
+      permisoEnEdicionId = permiso.id;
+
+      epInterno.textContent = permiso.interno;
+      epArea.textContent = permiso.area;
+      epApp.textContent = permiso.app;
+      epFechaSolicitud.textContent = permiso.fechaSolicitud;
+      epFechaAprobacion.textContent = permiso.fechaAprobacion || '—';
+      epEstadoSelect.value = permiso.estado;
+
+      modalEditarPermiso.classList.add('active');
+    }
+
+    function cerrarModalEditarPermiso() {
+      permisoEnEdicionId = null;
+      modalEditarPermiso.classList.remove('active');
+    }
+
+    modalEditarCloseTop.addEventListener('click', cerrarModalEditarPermiso);
+    modalEditarCancelar.addEventListener('click', cerrarModalEditarPermiso);
+
+    modalEditarPermiso.addEventListener('click', (e) => {
+      if (e.target === modalEditarPermiso) {
+        cerrarModalEditarPermiso();
+      }
+    });
+
+    // Delegación de eventos para el lápiz en la tabla del dashboard
+    dashboardTableBody.addEventListener('click', (e) => {
+      const btn = e.target.closest('.btn-edit-permiso');
+      if (!btn) return;
+
+      const permId = parseInt(btn.dataset.permId, 10);
+      const permiso = permisosData.find(p => p.id === permId);
+      if (!permiso) return;
+
+      abrirModalEditarPermiso(permiso);
+    });
+
+    modalEditarGuardar.addEventListener('click', () => {
+      if (permisoEnEdicionId == null) {
+        cerrarModalEditarPermiso();
+        return;
+      }
+
+      const permiso = permisosData.find(p => p.id === permisoEnEdicionId);
+      if (!permiso) {
+        cerrarModalEditarPermiso();
+        return;
+      }
+
+      const nuevoEstado = epEstadoSelect.value;
+      permiso.estado = nuevoEstado;
+
+      // Si se marca como aprobado y no tenía fecha de aprobación,
+      // podrías asignar una fecha actual aquí si quisieras.
+      // Por ahora solo dejamos los datos tal cual.
+
+      // Refrescar dashboard y vista Permisos
+      applyFilters();
+      renderPermisosList(permisosData);
+
+      cerrarModalEditarPermiso();
+    });
+  });
+</script>
+
+</body>
+</html>
