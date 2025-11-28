@@ -1,4 +1,4 @@
-const API_URL = "http://127.0.0.1:8000"; // tu backend FastAPI
+const API_URL = process.env.REACT_APP_API_URL; // tu backend FastAPI
 
 // Helper para GET
 export async function apiGet(endpoint) {
